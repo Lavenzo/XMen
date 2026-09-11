@@ -1,0 +1,524 @@
+:root {
+  color-scheme: dark;
+  --gold: #ffcf65;
+  --cyan: #8bdff7;
+  --panel: #0b1328;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #040815;
+  color: #edf4ff;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+}
+
+body {
+  background: radial-gradient(ellipse at top, #263451, #040815 75%);
+}
+
+button {
+  color: inherit;
+  font: inherit;
+  font-weight: bold;
+  border: 1px solid #536885;
+  border-radius: 4px;
+  background: #17243b;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:hover {
+  border-color: var(--gold);
+  background: #293d58;
+}
+button:active,
+button.held {
+  background: #54728f;
+  transform: translateY(2px);
+}
+button:focus-visible,
+canvas:focus-visible {
+  outline: 3px solid var(--cyan);
+}
+
+#arcade {
+  width: min(1440px, 100%);
+  margin: auto;
+  padding: 10px 22px;
+}
+
+#toolbar {
+  min-height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand {
+  color: var(--gold);
+  font-size: 25px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.brand small {
+  color: #94accb;
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-left: 8px;
+}
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+}
+nav button {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+#viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #091225;
+  border: 2px solid #455575;
+  box-shadow: 0 15px 60px #0008;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+#overlay button {
+  pointer-events: auto;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.09;
+  background: repeating-linear-gradient(transparent 0 3px, #000 3px 4px);
+}
+
+.titleActions {
+  position: absolute;
+  top: 69%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.primary {
+  color: #101827;
+  background: var(--gold);
+  border: none;
+  padding: 14px 38px;
+  box-shadow: 5px 5px 0 #854d3c;
+  font-size: clamp(13px, 2vw, 25px);
+  letter-spacing: 2px;
+}
+
+.primary:hover {
+  background: #ffe4a0;
+}
+.note {
+  color: #aac0da;
+  font-size: clamp(9px, 1.1vw, 15px);
+  text-align: center;
+}
+
+.selection {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.selection h1 {
+  position: absolute;
+  top: 3%;
+  left: 5%;
+  margin: 0;
+  color: var(--gold);
+  font-size: clamp(16px, 2.5vw, 34px);
+}
+
+.roster {
+  position: absolute;
+  left: 5%;
+  top: 17%;
+  width: 44%;
+  height: 59%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.roster button {
+  position: relative;
+  padding: 0;
+  background: transparent;
+  border: 2px solid #50637d;
+  overflow: hidden;
+}
+
+.roster button.selected {
+  border-color: var(--gold);
+  box-shadow:
+    0 0 14px #ffcf6533,
+    inset 0 0 20px #ffcf6522;
+}
+
+.roster button span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #081122ed;
+  padding: 7px 1px;
+  font-size: clamp(8px, 1vw, 14px);
+}
+
+.selectionBottom {
+  position: absolute;
+  bottom: 4%;
+  left: 5%;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.selectionBottom .note {
+  max-width: 53%;
+  text-align: left;
+}
+
+.panel {
+  pointer-events: auto;
+  width: min(680px, 86%);
+  background: #081125f5;
+  border: 2px solid var(--gold);
+  box-shadow: 10px 10px 0 #0007;
+  padding: 25px 30px;
+  text-align: center;
+}
+
+.panel h1 {
+  margin: 0 0 15px;
+  color: var(--gold);
+  font-size: clamp(22px, 3vw, 42px);
+}
+.panel p {
+  color: #bacfe6;
+  line-height: 1.6;
+  font-size: clamp(11px, 1.5vw, 18px);
+}
+.panel .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.panel button {
+  padding: 12px 20px;
+}
+
+#helpText {
+  color: #91a6c1;
+  text-align: center;
+  font-size: 12px;
+  padding: 12px;
+}
+
+#touchControls {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  background: #0b142a;
+  border: 1px solid #2c3b58;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.showTouch #touchControls {
+  display: flex;
+}
+
+.dpad {
+  display: grid;
+  grid-template: repeat(3, 46px) / repeat(3, 50px);
+  gap: 3px;
+}
+
+.dpad button {
+  font-size: 23px;
+  background: #233751;
+  border-bottom: 4px solid #060d1e;
+}
+.up {
+  grid-area: 1 / 2;
+}
+.left {
+  grid-area: 2 / 1;
+}
+.right {
+  grid-area: 2 / 3;
+}
+.down {
+  grid-area: 3 / 2;
+}
+.padCenter {
+  grid-area: 2 / 2;
+  display: grid;
+  place-items: center;
+  color: #657b98;
+}
+
+.actionPad {
+  display: grid;
+  grid-template-columns: repeat(2, 68px);
+  gap: 7px;
+}
+.actionPad button {
+  min-height: 61px;
+  border-radius: 14px;
+  border-bottom: 4px solid #040919;
+  font-size: 23px;
+}
+.actionPad small,
+.interact small {
+  display: block;
+  font-size: 10px;
+}
+.attack {
+  background: #246778;
+}
+.heavy {
+  background: #876124;
+}
+.special {
+  background: #754581;
+}
+.jump {
+  background: #3c5586;
+}
+
+.interact {
+  text-align: center;
+  max-width: 150px;
+  color: #95a9c7;
+  font-size: 10px;
+}
+.interact button {
+  display: block;
+  margin: 0 auto 10px;
+  padding: 8px 20px;
+  font-size: 19px;
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+  #arcade {
+    padding: 0;
+  }
+  #touchControls {
+    display: flex;
+  }
+  #toolbar {
+    padding: 4px 7px;
+    min-height: 40px;
+    gap: 5px;
+  }
+  .brand {
+    font-size: 19px;
+  }
+  .brand small {
+    display: none;
+  }
+  nav {
+    gap: 3px;
+  }
+  nav button {
+    padding: 7px 6px;
+    font-size: 10px;
+  }
+  #helpText {
+    display: none;
+  }
+  #viewport {
+    border-width: 1px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand {
+    font-size: 15px;
+  }
+  nav button {
+    font-size: 9px;
+    padding: 7px 4px;
+  }
+  #touchControls {
+    padding: 12px 6px;
+    gap: 5px;
+  }
+  .dpad {
+    grid-template: repeat(3, 44px) / repeat(3, 44px);
+    gap: 2px;
+  }
+  .actionPad {
+    grid-template-columns: repeat(2, 56px);
+    gap: 5px;
+  }
+  .interact {
+    max-width: 70px;
+  }
+  .interact button {
+    padding: 8px 12px;
+  }
+  .primary {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+  .titleActions {
+    gap: 6px;
+  }
+  .roster {
+    gap: 3px;
+  }
+  .roster button span {
+    padding: 3px 0;
+  }
+  .panel {
+    padding: 12px;
+  }
+  .panel h1 {
+    margin-bottom: 5px;
+  }
+  .panel button {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  body {
+    overflow: hidden;
+  }
+  #arcade {
+    position: relative;
+    padding: 0;
+    height: 100dvh;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 36px minmax(0, 1fr);
+  }
+  #toolbar {
+    min-height: 36px;
+  }
+  #viewport {
+    width: min(calc(100vw - 314px), calc((100dvh - 42px) * 16 / 9));
+    height: auto;
+    align-self: center;
+    justify-self: center;
+  }
+  #touchControls {
+    display: flex;
+    position: absolute;
+    inset: 36px 0 0;
+    background: none;
+    border: 0;
+    padding: 0;
+    pointer-events: none;
+  }
+  #touchControls button {
+    pointer-events: auto;
+  }
+  .dpad {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    grid-template: repeat(3, 44px) / repeat(3, 46px);
+    gap: 2px;
+  }
+  .actionPad {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    grid-template-columns: repeat(2, 65px);
+  }
+  .interact {
+    position: absolute;
+    bottom: 5px;
+    left: 41px;
+  }
+  .interact button {
+    margin: 0;
+    padding: 5px 17px;
+  }
+  .interact > span {
+    display: none;
+  }
+  #helpText {
+    display: none;
+  }
+  .primary {
+    padding: 7px 16px;
+    font-size: 13px;
+  }
+  .roster {
+    gap: 4px;
+  }
+  .roster button span {
+    padding: 3px 0;
+    font-size: 9px;
+  }
+  .panel {
+    padding: 12px;
+  }
+  .panel h1 {
+    font-size: 23px;
+    margin-bottom: 5px;
+  }
+  .panel p {
+    margin: 6px;
+  }
+  .panel button {
+    padding: 8px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanlines {
+    display: none;
+  }
+}
