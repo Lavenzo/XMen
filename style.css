@@ -16,6 +16,9 @@ body {
   background: #040815;
   color: #edf4ff;
   font-family: Arial, "Microsoft YaHei", sans-serif;
+
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -269,11 +272,20 @@ canvas {
   background: #0b142a;
   border: 1px solid #2c3b58;
 
-  /* Mobile control protection */
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#touchControls *,
+#touchControls button {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body.showTouch #touchControls {
