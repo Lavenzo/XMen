@@ -1,4 +1,3 @@
-// Part 1 of 5
 "use strict";
 
 let W = 1280;
@@ -79,8 +78,8 @@ let WORDS = {
   disc: ["THROWING DISC", "投掷飞盘"],
   landscape: ["LANDSCAPE RECOMMENDED", "建议横屏游玩"],
   titleNote: [
-    "8 MUTANTS / 8 STAGES / ONE FUTURE",
-    "八位英雄 / 八大关卡 / 共同的未来",
+    "8 HEROES / 8 STAGES / ONE MISSION",
+    "八位英雄 / 八大关卡 / 同一个使命",
   ],
   titleTop: ["AN ARCADE BATTLE FOR THE FUTURE", "一场为未来而战的街机冒险"],
   titleBottom: [
@@ -88,8 +87,8 @@ let WORDS = {
     "为同伴而战。为未来而战。",
   ],
   fan: [
-    "UNOFFICIAL FAN GAME • PERSONAL HOBBY PROJECT",
-    "非官方同人作品 • 个人爱好项目",
+    "DEVELOPED BY LAVENZO • UNOFFICIAL X-MEN FAN GAME",
+    "凯凯开发制作 • 非官方X战警同人游戏",
   ],
   help: [
     "ARROWS Move • A Attack • S Heavy • D Special • W Jump • E Pick up • Esc Pause",
@@ -1372,8 +1371,6 @@ class BreakableObject {
     c.restore();
   }
 }
-
-// Part 2 of 5
 
 function drawHumanoid(c, actor, time, scale = 1) {
   let d = actor.def,
@@ -3422,8 +3419,6 @@ class Actor {
   }
 }
 
-// PART 3/5
-
 class Player extends Actor {
   constructor(game, def) {
     super(game, 170, 555);
@@ -3581,7 +3576,21 @@ class Player extends Actor {
       (critical ? 1.5 : 1) *
       (this.z > 30 ? 1.3 : 1);
 
-    let range = this.def.range + (heavy ? 30 : 0);
+    // Amended: separate A and S attack ranges for Storm, Rogue and Colossus.
+    let range;
+
+    if (id === "storm") {
+      // Storm: short attack / long lightning attack.
+      range = heavy ? 520 : 100;
+    } else if (id === "rogue") {
+      // Rogue: S reaches 300 game units beyond normal range.
+      range = this.def.range + (heavy ? 300 : 0);
+    } else if (id === "colossus") {
+      // Colossus: A keeps normal reach; S gains 250 extra game units.
+      range = this.def.range + (heavy ? 250 : 0);
+    } else {
+      range = this.def.range + (heavy ? 30 : 0);
+    }
 
     if (this.weapon) {
       damage += this.weapon.damage;
@@ -3631,7 +3640,16 @@ class Player extends Actor {
     } else if (id === "gambit" && !heavy) {
       shot = { type: "card", color: "#ff8bdc", speed: 530 };
     } else if (id === "jean") {
-      shot = { type: "orb", color: "#ffacdb", speed: 480 };
+      // Amended: A fires a short-range orb; S keeps the long-range orb.
+      // Travel distance: speed × lifetime.
+      // A: 480 × 0.45 = approximately 216 game units.
+      // S: 480 × 1.5  = approximately 720 game units.
+      shot = {
+        type: "orb",
+        color: "#ffacdb",
+        speed: 480,
+        life: heavy ? 1.5 : 0.45,
+      };
     }
 
     if (this.weapon?.type === "blaster") {
@@ -3653,7 +3671,11 @@ class Player extends Actor {
           "player",
           shot.type,
           shot.color,
-          { life: 1.5, pierce: finisher },
+          {
+            // Use Jean's chosen lifetime; other projectiles default to 1.5 seconds.
+            life: shot.life ?? 1.5,
+            pierce: finisher,
+          },
         ),
       );
     }
@@ -3700,12 +3722,16 @@ class Player extends Actor {
         0.28,
       );
     } else {
+      // Amended: allow Colossus's S slash to grow with his attack range.
+      // Other attacks keep the existing visual size cap.
+      let slashSize = id === "colossus" && heavy ? range : Math.min(range, 190);
+
       g.effect(
         "slash",
         this.x + this.facing * 35,
         this.y - this.z - 70,
         this.def.trim,
-        Math.min(range, 190),
+        slashSize,
         0.23,
         this.facing,
       );
@@ -3923,22 +3949,32 @@ class Player extends Actor {
         );
       }
     } else if (id === "nightcrawler") {
-      const targets = g.enemies.filter((e) => !e.dead && dist(this, e) < 720);
+      // Amended: special attack targeting range increased from 720 to 1400.
+      // Nightcrawler can now teleport to enemies farther away.
+      const targets = g.enemies.filter((e) => !e.dead && dist(this, e) < 1400);
+
       if (targets.length) {
         const enemy = choose(targets);
+
         g.effect("portal", this.x, this.y - 60, "#a48af5", 85, 0.5);
+
         this.x = clamp(
           enemy.x - enemy.facing * 60,
           g.stage.arena ? g.camera + 50 : 45,
           g.stage.gate - 55,
         );
+
         this.y = enemy.y;
         this.facing = enemy.facing;
         this.invuln = Math.max(this.invuln, 0.5);
         this.attackAnim = 0.3;
+
         g.effect("portal", this.x, this.y - 60, "#a48af5", 85, 0.5);
-        if (enemy.hurt(38, this, { heavy: true, knock: 35 }))
+
+        if (enemy.hurt(38, this, { heavy: true, knock: 35 })) {
           this.registerHit();
+        }
+
         g.audio.play("teleport");
       }
     } else if (id === "jean") {
@@ -5061,8 +5097,6 @@ class StageManager {
   }
 }
 
-// PART 4/5
-
 function drawCar(c, x, y, color = "#9b6878", scale = 1) {
   c.save();
   c.translate(x, y);
@@ -5935,8 +5969,6 @@ class Scenery {
   }
 }
 
-// PART 5/5
-
 class Game {
   constructor() {
     this.canvas = document.getElementById("gameCanvas");
@@ -6725,9 +6757,21 @@ class Game {
     c.globalAlpha = 0.1;
     badge(c, W / 2, 250, 210);
     c.restore();
-
+    /*
+    Replace these two code so that the wording "AN ARCADE BATTLE FOR THE FUTURE" is not truncated
     text(c, tr("titleTop"), W / 2 + 5, 153, 105, "#070e1c", "center");
     text(c, tr("titleTop"), W / 2, 146, 105, "#f4cf73", "center");
+    */
+    // Use a smaller font for the longer English title.
+    let titleTopText = tr("titleTop");
+    let titleTopSize =
+      titleTopText === "AN ARCADE BATTLE FOR THE FUTURE" ? 58 : 105;
+
+    // Dark shadow
+    text(c, titleTopText, W / 2 + 5, 153, titleTopSize, "#070e1c", "center");
+
+    // Gold title
+    text(c, titleTopText, W / 2, 146, titleTopSize, "#f4cf73", "center");
     text(c, tr("titleBottom"), W / 2, 202, 40, "#d3e8ff", "center");
 
     line(
