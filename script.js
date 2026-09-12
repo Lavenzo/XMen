@@ -23,6 +23,8 @@ gameMenuBackground.src = "image/GameMenuBackground.png";
 charSelectionBackground.src = "image/CharSelection.png";
 const stage1Background = new Image();
 stage1Background.src = "image/Stage1Background.png";
+const stage2Background = new Image();
+stage2Background.src = "image/Stage2Background.png";
 
 let language = "en";
 try {
@@ -5294,6 +5296,17 @@ class Scenery {
 
       c.drawImage(stage1Background, offset, 0, scaledW, H);
       c.drawImage(stage1Background, offset + scaledW, 0, scaledW, H);
+    } else if (g.stage.index === 1 && stage2Background.naturalWidth > 0) {
+      const scale = H / 749;
+      const scaledW = 2098 * scale;
+
+      const parallaxFactor = 0.6;
+      let x = -camera * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
+
+      c.drawImage(stage2Background, offset, 0, scaledW, H);
+      c.drawImage(stage2Background, offset + scaledW, 0, scaledW, H);
     } else {
       const sky = c.createLinearGradient(0, 0, 0, TOP);
       sky.addColorStop(0, "#090f23");
