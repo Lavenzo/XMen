@@ -16,6 +16,10 @@ let noise = (n) => {
   return v - Math.floor(v);
 };
 
+// Image defined for background image chage
+let gameMenuBackground = new Image();
+gameMenuBackground.src = "image/GameMenuBackground.png";
+
 let language = "en";
 try {
   language = localStorage.getItem("mutant-wars-language") || "en";
@@ -744,17 +748,29 @@ class InputManager {
     ]);
     let vp = document.getElementById("viewport");
     if (vp) {
-      vp.addEventListener("touchstart", (e) => {
-        if (!e.target.closest("button")) e.preventDefault();
-      }, { passive: false });
-      vp.addEventListener("touchmove", (e) => {
-        if (!e.target.closest("button")) e.preventDefault();
-      }, { passive: false });
+      vp.addEventListener(
+        "touchstart",
+        (e) => {
+          if (!e.target.closest("button")) e.preventDefault();
+        },
+        { passive: false },
+      );
+      vp.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!e.target.closest("button")) e.preventDefault();
+        },
+        { passive: false },
+      );
     }
     let tc = document.getElementById("touchControls");
     if (tc) {
-      tc.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
-      tc.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+      tc.addEventListener("touchstart", (e) => e.preventDefault(), {
+        passive: false,
+      });
+      tc.addEventListener("touchmove", (e) => e.preventDefault(), {
+        passive: false,
+      });
     }
 
     window.addEventListener("keydown", (e) => {
@@ -6764,36 +6780,24 @@ class Game {
   }
 
   drawTitle(c) {
-    const gradient = c.createLinearGradient(0, 0, W, H);
-    gradient.addColorStop(0, "#111c35");
-    gradient.addColorStop(0.5, "#26304a");
-    gradient.addColorStop(1, "#1c1830");
-    c.fillStyle = gradient;
-    c.fillRect(0, 0, W, H);
-
-    for (let i = 0; i < 12; i++) {
-      drawBuilding(
-        c,
-        i * 120 - 65,
-        445,
-        105,
-        130 + noise(i + 3) * 175,
-        "#152039",
-        "#a7bed955",
-        i * 12,
-      );
+    // Draw custom title-screen background image
+    if (gameMenuBackground.complete) {
+      c.drawImage(gameMenuBackground, 0, 0, W, H);
+    } else {
+      // Fallback background while image is loading
+      const gradient = c.createLinearGradient(0, 0, W, H);
+      gradient.addColorStop(0, "#111c35");
+      gradient.addColorStop(0.5, "#26304a");
+      gradient.addColorStop(1, "#1c1830");
+      c.fillStyle = gradient;
+      c.fillRect(0, 0, W, H);
     }
 
     c.save();
     c.globalAlpha = 0.1;
     badge(c, W / 2, 250, 210);
     c.restore();
-    /*
-    Replace these two code so that the wording "AN ARCADE BATTLE FOR THE FUTURE" is not truncated
-    text(c, tr("titleTop"), W / 2 + 5, 153, 105, "#070e1c", "center");
-    text(c, tr("titleTop"), W / 2, 146, 105, "#f4cf73", "center");
-    */
-    // Use a smaller font for the longer English title.
+
     let titleTopText = tr("titleTop");
     let titleTopSize =
       titleTopText === "AN ARCADE BATTLE FOR THE FUTURE" ? 58 : 105;
@@ -6803,6 +6807,7 @@ class Game {
 
     // Gold title
     text(c, titleTopText, W / 2, 146, titleTopSize, "#f4cf73", "center");
+
     text(c, tr("titleBottom"), W / 2, 202, 40, "#d3e8ff", "center");
 
     line(
@@ -6814,24 +6819,30 @@ class Game {
       "#e6b66d",
       3,
     );
+
     text(c, tr("titleNote"), W / 2, 251, 17, "#9eb5d0", "center");
 
     const positions = [340, 445, 550, 650, 755, 860, 955, 240];
+
     for (let i = 0; i < HEROES.length; i++) {
       const hero = HEROES[i];
       const x = positions[i];
       const y = 478 + (i % 2) * 11;
 
       oval(c, x, y, 34, 10, "#0006");
+
       c.save();
       c.translate(x, y);
+
       drawHumanoid(c, this.displayActor(hero), this.time, i === 0 ? 1.1 : 0.96);
+
       c.restore();
     }
 
     const shade = c.createLinearGradient(0, 460, 0, H);
     shade.addColorStop(0, "transparent");
     shade.addColorStop(1, "#070e1d");
+
     c.fillStyle = shade;
     c.fillRect(0, 460, W, H - 460);
 
