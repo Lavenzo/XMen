@@ -16,9 +16,11 @@ let noise = (n) => {
   return v - Math.floor(v);
 };
 
-// Image defined for background image chage
+// Image defined for background image + character selection chage
 let gameMenuBackground = new Image();
+let charSelectionBackground = new Image();
 gameMenuBackground.src = "image/GameMenuBackground.png";
+charSelectionBackground.src = "image/CharSelection.png";
 
 let language = "en";
 try {
@@ -6850,11 +6852,15 @@ class Game {
   }
 
   drawSelection(c) {
-    const gradient = c.createLinearGradient(0, 0, W, H);
-    gradient.addColorStop(0, "#101b31");
-    gradient.addColorStop(1, "#26334d");
-    c.fillStyle = gradient;
-    c.fillRect(0, 0, W, H);
+    if (charSelectionBackground.complete) {
+      c.drawImage(charSelectionBackground, 0, 0, W, H);
+    } else {
+      const gradient = c.createLinearGradient(0, 0, W, H);
+      gradient.addColorStop(0, "#101b31");
+      gradient.addColorStop(1, "#26334d");
+      c.fillStyle = gradient;
+      c.fillRect(0, 0, W, H);
+    }
 
     const left = W * 0.05;
     const top = H * 0.17;
@@ -6899,6 +6905,7 @@ class Game {
     text(c, localPair(hero.ability), 899, 524, 17, "#accfe8", "center");
 
     const labels = [tr("attack"), tr("speed"), tr("defence")];
+
     for (let i = 0; i < 3; i++) {
       const x = 700 + i * 138;
       text(c, labels[i], x, 563, 15, "#aabfd8");
