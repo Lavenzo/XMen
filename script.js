@@ -744,8 +744,12 @@ class InputManager {
     ]);
     let vp = document.getElementById("viewport");
     if (vp) {
-      vp.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
-      vp.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+      vp.addEventListener("touchstart", (e) => {
+        if (!e.target.closest("button")) e.preventDefault();
+      }, { passive: false });
+      vp.addEventListener("touchmove", (e) => {
+        if (!e.target.closest("button")) e.preventDefault();
+      }, { passive: false });
     }
     let tc = document.getElementById("touchControls");
     if (tc) {
