@@ -19,8 +19,10 @@ let noise = (n) => {
 // Image defined for background image + character selection chage
 let gameMenuBackground = new Image();
 let charSelectionBackground = new Image();
+let stage1Background = new Image();
 gameMenuBackground.src = "image/GameMenuBackground.png";
 charSelectionBackground.src = "image/CharSelection.png";
+stage1Background.src = "image/Stage1Background.png";
 
 let language = "en";
 try {
@@ -5281,75 +5283,83 @@ class Scenery {
     const stage = STAGES[g.stage.index];
     const camera = g.camera;
 
-    const sky = c.createLinearGradient(0, 0, 0, TOP);
-    sky.addColorStop(0, "#090f23");
-    sky.addColorStop(1, stage.sky);
-    c.fillStyle = sky;
-    c.fillRect(0, 0, W, H);
+    if (g.stage.index === 0 && stage1Background.complete) {
+      const bgWidth = 4200;
+      const bgHeight = 1042;
+      const xOffset = -camera;
+      const yOffset = H - bgHeight;
+      c.drawImage(stage1Background, xOffset, yOffset, bgWidth, bgHeight);
+    } else {
+      const sky = c.createLinearGradient(0, 0, 0, TOP);
+      sky.addColorStop(0, "#090f23");
+      sky.addColorStop(1, stage.sky);
+      c.fillStyle = sky;
+      c.fillRect(0, 0, W, H);
 
-    oval(c, 1050 - camera * 0.035, 126, 62, 62, "#d4d4cc25");
-    oval(c, 1062 - camera * 0.035, 117, 53, 53, stage.sky);
+      oval(c, 1050 - camera * 0.035, 126, 62, 62, "#d4d4cc25");
+      oval(c, 1062 - camera * 0.035, 117, 53, 53, stage.sky);
 
-    for (let i = 0; i < 45; i++) {
-      const x = (((noise(i * 7) * 1700 - camera * 0.045) % W) + W) % W;
-      const y = 35 + noise(i * 19) * 190;
-      c.fillStyle = "#d5ddf1";
-      c.globalAlpha = 0.2 + noise(i * 5) * 0.5;
-      c.fillRect(x, y, 2, 2);
-    }
-    c.globalAlpha = 1;
+      for (let i = 0; i < 45; i++) {
+        const x = (((noise(i * 7) * 1700 - camera * 0.045) % W) + W) % W;
+        const y = 35 + noise(i * 19) * 190;
+        c.fillStyle = "#d5ddf1";
+        c.globalAlpha = 0.2 + noise(i * 5) * 0.5;
+        c.fillRect(x, y, 2, 2);
+      }
+      c.globalAlpha = 1;
 
-    c.save();
-    c.translate(-camera * 0.2, 0);
-    for (let i = -1; i < 18; i++) {
-      const height = 110 + noise(i + 40) * 175;
-      drawBuilding(c, i * 150, 360, 135, height, "#172238", stage.glow, i * 31);
-    }
-    c.restore();
+      c.save();
+      c.translate(-camera * 0.2, 0);
+      for (let i = -1; i < 18; i++) {
+        const height = 110 + noise(i + 40) * 175;
+        drawBuilding(c, i * 150, 360, 135, height, "#172238", stage.glow, i * 31);
+      }
+      c.restore();
 
-    c.save();
-    c.translate(-camera * 0.58, 0);
-    const first = Math.floor((camera * 0.58) / 360) - 1;
-    for (let i = first; i < first + 6; i++) {
-      this.module(c, i * 360, stage, i);
-    }
-    c.restore();
+      c.save();
+      c.translate(-camera * 0.58, 0);
+      const first = Math.floor((camera * 0.58) / 360) - 1;
+      for (let i = first; i < first + 6; i++) {
+        this.module(c, i * 360, stage, i);
+      }
+      c.restore();
 
-    const floor = c.createLinearGradient(0, TOP - 18, 0, H);
-    floor.addColorStop(0, stage.floor);
-    floor.addColorStop(1, "#111b2b");
-    c.fillStyle = floor;
-    c.fillRect(0, TOP - 18, W, H - TOP + 18);
+      const floor = c.createLinearGradient(0, TOP - 18, 0, H);
+      floor.addColorStop(0, stage.floor);
+      floor.addColorStop(1, "#111b2b");
+      c.fillStyle = floor;
+      c.fillRect(0, TOP - 18, W, H - TOP + 18);
 
-    c.fillStyle = "#080f1f";
-    c.fillRect(0, TOP - 22, W, 12);
-    c.fillStyle = "#9fa9b044";
-    c.fillRect(0, TOP - 10, W, 4);
+      c.fillStyle = "#080f1f";
+      c.fillRect(0, TOP - 22, W, 12);
+      c.fillStyle = "#9fa9b044";
+      c.fillRect(0, TOP - 10, W, 4);
 
-    for (let i = 0; i < 5; i++) {
-      const y = TOP + 20 + i * i * 13;
-      line(
-        c,
-        [
-          [0, y],
-          [W, y],
-        ],
-        "#bac8db15",
-        1,
-      );
-    }
+      for (let i = 0; i < 5; i++) {
+        const y = TOP + 20 + i * i * 13;
+        line(
+          c,
+          [
+            [0, y],
+            [W, y],
+          ],
+          "#bac8db15",
+          1,
+        );
+      }
 
-    const offset = ((camera % 150) + 150) % 150;
-    for (let x = -150; x < W + 150; x += 150) {
-      line(
-        c,
-        [
-          [x - offset, TOP],
-          [x - offset - 85, H],
-        ],
-        "#a8b8cd12",
-        1,
-      );
+      const offset = ((camera % 150) + 150) % 150;
+      for (let x = -150; x < W + 150; x += 150) {
+        line(
+          c,
+          [
+            [x - offset, TOP],
+            [x - offset - 85, H],
+          ],
+          "#a8b8cd12",
+          1,
+        );
+      }
     }
 
     for (let i = 0; i < 28; i++) {
@@ -5388,18 +5398,20 @@ class Scenery {
       c.save();
       c.translate(-camera, 0);
 
-      for (let x = 130; x < 4400; x += 280) {
-        polygon(
-          c,
-          [
-            [x, 571],
-            [x + 105, 571],
-            [x + 99, 579],
-            [x - 6, 579],
-          ],
-          "#d4bd7955",
-          null,
-        );
+      if (g.stage.index !== 0) {
+        for (let x = 130; x < 4400; x += 280) {
+          polygon(
+            c,
+            [
+              [x, 571],
+              [x + 105, 571],
+              [x + 99, 579],
+              [x - 6, 579],
+            ],
+            "#d4bd7955",
+            null,
+          );
+        }
       }
 
       if (stage.theme === "city") drawCar(c, 1180, 437, "#6b839b", 0.8);
