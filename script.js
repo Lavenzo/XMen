@@ -29,6 +29,8 @@ const stage3Background = new Image();
 stage3Background.src = "image/Stage3Background.png";
 const stage4Background = new Image();
 stage4Background.src = "image/Stage4Background.png";
+const stage5Background = new Image();
+stage5Background.src = "image/Stage5Background.png";
 
 let language = "en";
 try {
@@ -5333,6 +5335,17 @@ class Scenery {
 
       c.drawImage(stage4Background, offset, 0, scaledW, H);
       c.drawImage(stage4Background, offset + scaledW, 0, scaledW, H);
+    } else if (g.stage.index === 4 && stage5Background.naturalWidth > 0) {
+      const scale = H / 724;
+      const scaledW = 2172 * scale;
+
+      const parallaxFactor = 0.6;
+      let x = -camera * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
+
+      c.drawImage(stage5Background, offset, 0, scaledW, H);
+      c.drawImage(stage5Background, offset + scaledW, 0, scaledW, H);
     } else {
       const sky = c.createLinearGradient(0, 0, 0, TOP);
       sky.addColorStop(0, "#090f23");
