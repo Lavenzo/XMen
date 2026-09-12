@@ -21,6 +21,8 @@ let gameMenuBackground = new Image();
 let charSelectionBackground = new Image();
 gameMenuBackground.src = "image/GameMenuBackground.png";
 charSelectionBackground.src = "image/CharSelection.png";
+const stage1Background = new Image();
+stage1Background.src = "image/Stage1Background.png";
 
 let language = "en";
 try {
@@ -5281,137 +5283,133 @@ class Scenery {
     const stage = STAGES[g.stage.index];
     const camera = g.camera;
 
-    const sky = c.createLinearGradient(0, 0, 0, TOP);
-    sky.addColorStop(0, "#090f23");
-    sky.addColorStop(1, stage.sky);
-    c.fillStyle = sky;
-    c.fillRect(0, 0, W, H);
+    if (g.stage.index === 0 && stage1Background.naturalWidth > 0) {
+      const scale = H / 1024;
+      const scaledW = 4128 * scale;
 
-    oval(c, 1050 - camera * 0.035, 126, 62, 62, "#d4d4cc25");
-    oval(c, 1062 - camera * 0.035, 117, 53, 53, stage.sky);
+      const parallaxFactor = 0.6;
+      let x = -camera * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
 
-    for (let i = 0; i < 45; i++) {
-      const x = (((noise(i * 7) * 1700 - camera * 0.045) % W) + W) % W;
-      const y = 35 + noise(i * 19) * 190;
-      c.fillStyle = "#d5ddf1";
-      c.globalAlpha = 0.2 + noise(i * 5) * 0.5;
-      c.fillRect(x, y, 2, 2);
-    }
-    c.globalAlpha = 1;
+      c.drawImage(stage1Background, offset, 0, scaledW, H);
+      c.drawImage(stage1Background, offset + scaledW, 0, scaledW, H);
+    } else {
+      const sky = c.createLinearGradient(0, 0, 0, TOP);
+      sky.addColorStop(0, "#090f23");
+      sky.addColorStop(1, stage.sky);
+      c.fillStyle = sky;
+      c.fillRect(0, 0, W, H);
 
-    c.save();
-    c.translate(-camera * 0.2, 0);
-    for (let i = -1; i < 18; i++) {
-      const height = 110 + noise(i + 40) * 175;
-      drawBuilding(c, i * 150, 360, 135, height, "#172238", stage.glow, i * 31);
-    }
-    c.restore();
+      oval(c, 1050 - camera * 0.035, 126, 62, 62, "#d4d4cc25");
+      oval(c, 1062 - camera * 0.035, 117, 53, 53, stage.sky);
 
-    c.save();
-    c.translate(-camera * 0.58, 0);
-    const first = Math.floor((camera * 0.58) / 360) - 1;
-    for (let i = first; i < first + 6; i++) {
-      this.module(c, i * 360, stage, i);
-    }
-    c.restore();
+      for (let i = 0; i < 45; i++) {
+        const x = (((noise(i * 7) * 1700 - camera * 0.045) % W) + W) % W;
+        const y = 35 + noise(i * 19) * 190;
+        c.fillStyle = "#d5ddf1";
+        c.globalAlpha = 0.2 + noise(i * 5) * 0.5;
+        c.fillRect(x, y, 2, 2);
+      }
+      c.globalAlpha = 1;
 
-    const floor = c.createLinearGradient(0, TOP - 18, 0, H);
-    floor.addColorStop(0, stage.floor);
-    floor.addColorStop(1, "#111b2b");
-    c.fillStyle = floor;
-    c.fillRect(0, TOP - 18, W, H - TOP + 18);
+      c.save();
+      c.translate(-camera * 0.2, 0);
+      for (let i = -1; i < 18; i++) {
+        const height = 110 + noise(i + 40) * 175;
+        drawBuilding(
+          c,
+          i * 150,
+          360,
+          135,
+          height,
+          "#172238",
+          stage.glow,
+          i * 31,
+        );
+      }
+      c.restore();
 
-    c.fillStyle = "#080f1f";
-    c.fillRect(0, TOP - 22, W, 12);
-    c.fillStyle = "#9fa9b044";
-    c.fillRect(0, TOP - 10, W, 4);
+      c.save();
+      c.translate(-camera * 0.58, 0);
+      const first = Math.floor((camera * 0.58) / 360) - 1;
+      for (let i = first; i < first + 6; i++) {
+        this.module(c, i * 360, stage, i);
+      }
+      c.restore();
 
-    for (let i = 0; i < 5; i++) {
-      const y = TOP + 20 + i * i * 13;
-      line(
-        c,
-        [
-          [0, y],
-          [W, y],
-        ],
-        "#bac8db15",
-        1,
-      );
-    }
+      const floor = c.createLinearGradient(0, TOP - 18, 0, H);
+      floor.addColorStop(0, stage.floor);
+      floor.addColorStop(1, "#111b2b");
+      c.fillStyle = floor;
+      c.fillRect(0, TOP - 18, W, H - TOP + 18);
 
-    const offset = ((camera % 150) + 150) % 150;
-    for (let x = -150; x < W + 150; x += 150) {
-      line(
-        c,
-        [
-          [x - offset, TOP],
-          [x - offset - 85, H],
-        ],
-        "#a8b8cd12",
-        1,
-      );
-    }
+      c.fillStyle = "#080f1f";
+      c.fillRect(0, TOP - 22, W, 12);
+      c.fillStyle = "#9fa9b044";
+      c.fillRect(0, TOP - 10, W, 4);
 
-    for (let i = 0; i < 28; i++) {
-      const worldX = i * 165 + noise(i * 9) * 90;
-      const x = worldX - camera;
-      if (x < -100 || x > W + 100) continue;
-      const y = TOP + 35 + noise(i * 12) * 190;
-
-      if (stage.weather === "rain") {
-        oval(c, x, y, 20 + noise(i) * 45, 4 + noise(i * 2) * 5, "#99bad419");
+      for (let i = 0; i < 5; i++) {
+        const y = TOP + 20 + i * i * 13;
         line(
           c,
           [
-            [x - 20, y],
-            [x + 25, y],
+            [0, y],
+            [W, y],
           ],
-          stage.glow + "22",
-          2,
+          "#bac8db15",
+          1,
         );
-      } else {
+      }
+
+      const offset2 = ((camera % 150) + 150) % 150;
+      for (let x = -150; x < W + 150; x += 150) {
+        line(
+          c,
+          [
+            [x - offset2, TOP],
+            [x - offset2 - 85, H],
+          ],
+          "#a8b8cd12",
+          1,
+        );
+      }
+
+      for (let i = 0; i < 28; i++) {
+        const worldX = i * 165 + noise(i * 9) * 90;
+        const x = worldX - camera;
+        if (x < -100 || x > W + 100) continue;
+        const y = TOP + 35 + noise(i * 12) * 190;
+
+        if (stage.weather === "rain") {
+          oval(c, x, y, 20 + noise(i) * 45, 4 + noise(i * 2) * 5, "#99bad419");
+          line(
+            c,
+            [
+              [x - 20, y],
+              [x + 25, y],
+            ],
+            stage.glow + "22",
+            2,
+          );
+        }
+      }
+
+      c.fillStyle = "#080f1f";
+      for (let i = 0; i < 10; i++) {
         polygon(
           c,
           [
-            [x - 12, y],
-            [x - 5, y - 8],
-            [x + 13, y - 3],
-            [x + 18, y + 5],
+            [i * 150 - offset2 - 14, H],
+            [i * 150 - offset2, TOP - 18],
+            [i * 150 - offset2 + 8, TOP - 18],
+            [i * 150 - offset2 - 6, H],
           ],
-          "#9c9daf22",
+          "#080f1f",
           null,
         );
       }
-    }
-
-    if (["city", "rampage", "future"].includes(stage.theme)) {
-      c.save();
-      c.translate(-camera, 0);
-
-      for (let x = 130; x < 4400; x += 280) {
-        polygon(
-          c,
-          [
-            [x, 571],
-            [x + 105, 571],
-            [x + 99, 579],
-            [x - 6, 579],
-          ],
-          "#d4bd7955",
-          null,
-        );
-      }
-
-      if (stage.theme === "city") drawCar(c, 1180, 437, "#6b839b", 0.8);
-      if (stage.theme === "rampage") {
-        c.save();
-        c.translate(1930, 439);
-        c.rotate(-0.16);
-        drawCar(c, 0, 0, "#a87967", 0.95);
-        c.restore();
-      }
-
-      c.restore();
+      c.fillRect(0, H - 28, W, 28);
     }
   }
 
