@@ -742,6 +742,16 @@ class InputManager {
       "Enter",
       "Space",
     ]);
+    let vp = document.getElementById("viewport");
+    if (vp) {
+      vp.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+      vp.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+    }
+    let tc = document.getElementById("touchControls");
+    if (tc) {
+      tc.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+      tc.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+    }
 
     window.addEventListener("keydown", (e) => {
       if (!this.allowed.has(e.code)) return;
@@ -758,32 +768,49 @@ class InputManager {
       if (![...this.pointers.values()].some((p) => p.key === e.code))
         this.keys.delete(e.code);
     });
+    let release = (e) => {
+      let p = this.pointers.get(e.pointerId);
+      if (!p) return;
+      this.pointers.delete(e.pointerId);
+      if (![...this.pointers.values()].some((v) => v.key === p.key)) {
+        if (!this.keyboard.has(p.key)) this.keys.delete(p.key);
+        p.button.classList.remove("held");
+      }
+    };
+
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+
+    window.addEventListener("touchend", (e) => {
+      if (e.touches.length === 0) this.clear();
+    });
+    window.addEventListener("touchcancel", (e) => {
+      if (e.touches.length === 0) this.clear();
+    });
+
     document.querySelectorAll("[data-key]").forEach((button) => {
       button.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         game.audio.unlock();
         let key = button.dataset.key;
-        button.setPointerCapture(e.pointerId);
+        try {
+          button.setPointerCapture(e.pointerId);
+        } catch (err) {}
         this.pointers.set(e.pointerId, { key, button });
         this.keys.add(key);
         this.pressed.add(key);
         button.classList.add("held");
       });
-      let release = (e) => {
-        let p = this.pointers.get(e.pointerId);
-        if (!p) return;
-        this.pointers.delete(e.pointerId);
-        if (![...this.pointers.values()].some((v) => v.key === p.key)) {
-          if (!this.keyboard.has(p.key)) this.keys.delete(p.key);
-          p.button.classList.remove("held");
-        }
-      };
       button.addEventListener("pointerup", release);
       button.addEventListener("pointercancel", release);
       button.addEventListener("lostpointercapture", release);
       button.addEventListener("contextmenu", (e) => e.preventDefault());
     });
     window.addEventListener("blur", () => {
+      this.clear();
+      if (game.state === "playing") game.pause();
+    });
+    window.addEventListener("pagehide", () => {
       this.clear();
       if (game.state === "playing") game.pause();
     });
