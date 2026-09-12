@@ -5283,8 +5283,17 @@ class Scenery {
     const stage = STAGES[g.stage.index];
     const camera = g.camera;
 
-    if (g.stage.index === 0 && stage1Background.complete) {
-      c.drawImage(stage1Background, -camera.x, H - 1042, 4200, 1042);
+    if (g.stage.index === 0 && stage1Background.complete && stage1Background.naturalWidth > 0) {
+      const scale = H / stage1Background.naturalHeight;
+      const scaledW = stage1Background.naturalWidth * scale;
+
+      const parallaxFactor = 0.6;
+      let x = -camera.x * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
+
+      c.drawImage(stage1Background, offset, 0, scaledW, H);
+      c.drawImage(stage1Background, offset + scaledW, 0, scaledW, H);
     } else {
 
     const sky = c.createLinearGradient(0, 0, 0, TOP);
