@@ -59,6 +59,9 @@ canvas:focus-visible {
   width: min(1440px, 100%);
   margin: auto;
   padding: 10px 22px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #toolbar {
@@ -523,8 +526,9 @@ body.showTouch #touchControls {
   }
   .interact {
     position: absolute;
-    bottom: 160px;
-    left: 20px;
+    bottom: 159px;
+    right: 20px;
+    left: auto;
     max-width: none;
   }
   .interact button {
