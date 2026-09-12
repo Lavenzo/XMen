@@ -527,7 +527,7 @@ body.showTouch #touchControls {
   .interact {
     position: absolute;
     bottom: 159px;
-    right: 92px;
+    right: 20px;
     left: auto;
     max-width: none;
   }
