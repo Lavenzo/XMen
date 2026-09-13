@@ -6322,7 +6322,8 @@ class Game {
     if (this.state === "victory") {
       const actions = document.createElement("div");
       actions.className = "titleActions";
-      actions.style.top = "88%";
+      actions.style.top = "auto";
+      actions.style.bottom = "15px";
       actions.appendChild(
         this.makeButton(tr("menu"), () => this.setState("title")),
       );
