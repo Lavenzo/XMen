@@ -31,6 +31,14 @@ const stage4Background = new Image();
 stage4Background.src = "image/Stage4Background.png";
 const stage5Background = new Image();
 stage5Background.src = "image/Stage5Background.png";
+const stage6Background = new Image();
+stage6Background.src = "image/Stage6Background.png";
+const stage7Background = new Image();
+stage7Background.src = "image/Stage7Background.png";
+const stage8Background = new Image();
+stage8Background.src = "image/Stage8Background.png";
+const completionBackground = new Image();
+completionBackground.src = "image/CompletionBackground.png";
 
 let language = "en";
 try {
@@ -137,12 +145,12 @@ let WORDS = {
   ],
   victory: ["THE X-MEN HAVE PREVAILED", "X战警取得了胜利"],
   ending: [
-    "The mansion lights are on. Tonight, every mutant has a place to call home.",
-    "学院的灯再次亮起。今夜，每一位变种人都有了可以回去的家。",
+    "The battle is over. The mansion lights shine once more — a new tomorrow begins.",
+    "战斗已经结束。学院的灯再次亮起——新的明天，就此开始。",
   ],
   credits: [
-    "PROCEDURAL CANVAS ART • UNOFFICIAL FAN GAME • THANK YOU FOR PLAYING",
-    "程序绘制画面 • 非官方同人游戏 • 感谢游玩",
+    "CREATED BY LAVENZO • BUILT THROUGH CREATIVITY & PROBLEM SOLVING • THANK YOU FOR PLAYING",
+    "凯凯开发制作 • 创意与问题解决的成果 • 感谢游玩",
   ],
 };
 
@@ -5346,6 +5354,39 @@ class Scenery {
 
       c.drawImage(stage5Background, offset, 0, scaledW, H);
       c.drawImage(stage5Background, offset + scaledW, 0, scaledW, H);
+    } else if (g.stage.index === 5 && stage6Background.naturalWidth > 0) {
+      const scale = H / 724;
+      const scaledW = 2172 * scale;
+
+      const parallaxFactor = 0.6;
+      let x = -camera * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
+
+      c.drawImage(stage6Background, offset, 0, scaledW, H);
+      c.drawImage(stage6Background, offset + scaledW, 0, scaledW, H);
+    } else if (g.stage.index === 6 && stage7Background.naturalWidth > 0) {
+      const scale = H / 724;
+      const scaledW = 2172 * scale;
+
+      const parallaxFactor = 0.6;
+      let x = -camera * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
+
+      c.drawImage(stage7Background, offset, 0, scaledW, H);
+      c.drawImage(stage7Background, offset + scaledW, 0, scaledW, H);
+    } else if (g.stage.index === 7 && stage8Background.naturalWidth > 0) {
+      const scale = H / 936;
+      const scaledW = 1681 * scale;
+
+      const parallaxFactor = 0.6;
+      let x = -camera * parallaxFactor;
+      let offset = x % scaledW;
+      if (offset > 0) offset -= scaledW;
+
+      c.drawImage(stage8Background, offset, 0, scaledW, H);
+      c.drawImage(stage8Background, offset + scaledW, 0, scaledW, H);
     } else {
       const sky = c.createLinearGradient(0, 0, 0, TOP);
       sky.addColorStop(0, "#090f23");
@@ -6965,114 +7006,126 @@ class Game {
 
   drawVictory(c) {
     const t = this.stateTime;
-    const sky = c.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#3d5474");
-    sky.addColorStop(0.55, "#d6a68c");
-    sky.addColorStop(1, "#3c594d");
-    c.fillStyle = sky;
-    c.fillRect(0, 0, W, H);
 
-    oval(c, 1007, 166, 56, 56, "#ffe0ad");
+    if (completionBackground.naturalWidth > 0) {
+      const scale = Math.max(
+        W / completionBackground.naturalWidth,
+        H / completionBackground.naturalHeight,
+      );
+      const w = completionBackground.naturalWidth * scale;
+      const h = completionBackground.naturalHeight * scale;
+      const x = (W - w) / 2;
+      const y = (H - h) / 2;
+      c.drawImage(completionBackground, x, y, w, h);
+    } else {
+      const sky = c.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, "#3d5474");
+      sky.addColorStop(0.55, "#d6a68c");
+      sky.addColorStop(1, "#3c594d");
+      c.fillStyle = sky;
+      c.fillRect(0, 0, W, H);
 
-    for (let i = 0; i < 16; i++) {
-      const x = i * 90;
-      oval(c, x, 357, 65, 115 + noise(i) * 55, "#243e42");
-      c.fillStyle = "#304145";
-      c.fillRect(x - 6, 343, 12, 119);
-    }
+      oval(c, 1007, 166, 56, 56, "#ffe0ad");
 
-    c.fillStyle = "#6b6666";
-    c.fillRect(350, 249, 580, 221);
-    c.fillStyle = "#867978";
-    c.fillRect(460, 202, 360, 269);
-
-    polygon(
-      c,
-      [
-        [323, 255],
-        [414, 188],
-        [515, 255],
-      ],
-      "#3e4557",
-      "#293349",
-      3,
-    );
-    polygon(
-      c,
-      [
-        [758, 255],
-        [867, 188],
-        [957, 255],
-      ],
-      "#3e4557",
-      "#293349",
-      3,
-    );
-    polygon(
-      c,
-      [
-        [430, 210],
-        [640, 116],
-        [850, 210],
-      ],
-      "#454959",
-      "#293349",
-      4,
-    );
-
-    for (let row = 0; row < 2; row++) {
-      for (let col = 0; col < 7; col++) {
-        const x = 384 + col * 73;
-        const y = 276 + row * 71;
-        c.fillStyle = "#2c3e50";
-        c.fillRect(x, y, 36, 46);
-        c.fillStyle = "#e9c591a0";
-        c.fillRect(x + 5, y + 5, 26, 36);
-        line(
-          c,
-          [
-            [x + 18, y + 4],
-            [x + 18, y + 42],
-          ],
-          "#51515f",
-          3,
-        );
+      for (let i = 0; i < 16; i++) {
+        const x = i * 90;
+        oval(c, x, 357, 65, 115 + noise(i) * 55, "#243e42");
+        c.fillStyle = "#304145";
+        c.fillRect(x - 6, 343, 12, 119);
       }
+
+      c.fillStyle = "#6b6666";
+      c.fillRect(350, 249, 580, 221);
+      c.fillStyle = "#867978";
+      c.fillRect(460, 202, 360, 269);
+
+      polygon(
+        c,
+        [
+          [323, 255],
+          [414, 188],
+          [515, 255],
+        ],
+        "#3e4557",
+        "#293349",
+        3,
+      );
+      polygon(
+        c,
+        [
+          [758, 255],
+          [867, 188],
+          [957, 255],
+        ],
+        "#3e4557",
+        "#293349",
+        3,
+      );
+      polygon(
+        c,
+        [
+          [430, 210],
+          [640, 116],
+          [850, 210],
+        ],
+        "#454959",
+        "#293349",
+        4,
+      );
+
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < 7; col++) {
+          const x = 384 + col * 73;
+          const y = 276 + row * 71;
+          c.fillStyle = "#2c3e50";
+          c.fillRect(x, y, 36, 46);
+          c.fillStyle = "#e9c591a0";
+          c.fillRect(x + 5, y + 5, 26, 36);
+          line(
+            c,
+            [
+              [x + 18, y + 4],
+              [x + 18, y + 42],
+            ],
+            "#51515f",
+            3,
+          );
+        }
+      }
+
+      c.fillStyle = "#303242";
+      c.fillRect(603, 364, 74, 107);
+      for (const x of [578, 687]) {
+        c.fillStyle = "#b6aaa0";
+        c.fillRect(x, 325, 15, 146);
+      }
+      polygon(
+        c,
+        [
+          [558, 331],
+          [641, 282],
+          [724, 331],
+        ],
+        "#b5a89c",
+        "#615965",
+        3,
+      );
+      badge(c, 641, 308, 15);
+
+      c.fillStyle = "#435e4c";
+      c.fillRect(0, 472, W, H - 472);
+      polygon(
+        c,
+        [
+          [599, 472],
+          [681, 472],
+          [969, 720],
+          [313, 720],
+        ],
+        "#918783",
+        null,
+      );
     }
-
-    c.fillStyle = "#303242";
-    c.fillRect(603, 364, 74, 107);
-    for (const x of [578, 687]) {
-      c.fillStyle = "#b6aaa0";
-      c.fillRect(x, 325, 15, 146);
-    }
-    polygon(
-      c,
-      [
-        [558, 331],
-        [641, 282],
-        [724, 331],
-      ],
-      "#b5a89c",
-      "#615965",
-      3,
-    );
-    badge(c, 641, 308, 15);
-
-    c.fillStyle = "#435e4c";
-    c.fillRect(0, 472, W, H - 472);
-    polygon(
-      c,
-      [
-        [599, 472],
-        [681, 472],
-        [969, 720],
-        [313, 720],
-      ],
-      "#918783",
-      null,
-    );
-
     for (let i = 0; i < HEROES.length; i++) {
       const targetX = 230 + i * 116;
       const progress = clamp((t - i * 0.12) / 2.5, 0, 1);
