@@ -3655,6 +3655,9 @@ class Player extends Actor {
     } else if (id === "colossus") {
       // Colossus: A keeps normal reach; S gains 250 extra game units.
       range = this.def.range + (heavy ? 250 : 0);
+    } else if (id === "wolverine") {
+      // Wolverine: distinct A and S ranges, plus bonus reach during Berserker.
+      range = this.def.range + (heavy ? 55 : 10) + (this.specialTime > 0 ? 50 : 0);
     } else {
       range = this.def.range + (heavy ? 30 : 0);
     }
